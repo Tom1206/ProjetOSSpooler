@@ -1,23 +1,23 @@
 CC= gcc
 CFLAGS= -W -Wall -Werror
 LDFLAGS=
-EXEC= main.out
-SRC= $(wildcard *.c)
-OBJ= $(SRC:.c=.o)
+INCLUDES = -I "./include"
+EXEC= ./bin/main.out
+SRC= $(wildcard src/*.c)
+OBJ= $(patsubst src/%.c,obj/%.o,$(SRC))
 
 all: $(EXEC)
 
-main.out: $(OBJ)
-	$(CC) -o $@ $^ $(LDFLAGS)
+bin/main.out: $(OBJ)
+	$(CC) $(INCLUDES) -o $@ $^ $(LDFLAGS)
 
-
-%.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGS)
+obj/%.o: src/%.c
+	$(CC) $(INCLUDES) -o $@ -c $< $(CFLAGS)
 
 .PHONY: clean mrproper
 
 clean:
-	rm -rf *.o
+	rm -rf $(OBJ)
 
 mrproper: clean
 	rm -rf $(EXEC)
