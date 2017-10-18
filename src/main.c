@@ -55,7 +55,7 @@ int main(int argc, char const *argv[]) {
     //(void)argv;
     printf("Hello World\n");
 
-    const char* chemin = (int)argc > 1 ? argv[1] : "/home/joseffu/Travaux/SE";
+    const char* chemin = (int)argc > 1 ? argv[1] : "/home";
     //appel d'une fonction toutes les n secondes
     int i;
     int n = 2;
