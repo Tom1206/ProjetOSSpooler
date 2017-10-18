@@ -17,7 +17,7 @@ obj/%.o: src/%.c
 .PHONY: clean mrproper
 
 clean:
-	-rm edit $(objects)
+	rm -rf $(OBJ)
 
 mrproper: clean
 	rm -rf $(EXEC)
