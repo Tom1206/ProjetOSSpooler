@@ -1,5 +1,5 @@
 CC= gcc
-CFLAGS= -W -Wall
+CFLAGS= -W -Wall -Werror
 LDFLAGS=
 EXEC= main.out
 SRC= $(wildcard *.c)
