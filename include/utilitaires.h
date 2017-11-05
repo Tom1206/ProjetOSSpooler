@@ -1,13 +1,13 @@
 /**
-* @file utilitaire.h
-* @brief Header for utilitaire.h
+* @file utilitaires.h
+* @brief Header for utilitaires.h
 * @author Thomas Millot, Wael Hamed
 * @version 1.0
 * @date 25/10/2017
 */
 
-#ifndef UTILITAIRE_H
-#define UTILITAIRE_H
+#ifndef UTILITAIRES_H
+#define UTILITAIRES_H
 
 #include <stdio.h>
 #include <errno.h>
@@ -17,4 +17,4 @@
 void gestErr(char * msg);
 
 
-#endif // UTILITAIRE_H
+#endif // UTILITAIRES_H

@@ -6,7 +6,7 @@
 * @date 25/10/2017
 */
 
-#include "utilitaire.h"
+#include "utilitaires.h"
 
 /**
 * @brief Affiche proprement un message d'erreur

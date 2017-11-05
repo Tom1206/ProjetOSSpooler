@@ -11,7 +11,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h> //write
+#include <sys/types.h>
+#include <dirent.h>
+#include <fcntl.h> //open()
+#include <sys/stat.h> // O_RDONLY ...
+#include <string.h> //strerror
 
-/* code */
+void afficher_dossier(const char* chemin);
 
 #endif // DEMON_H
