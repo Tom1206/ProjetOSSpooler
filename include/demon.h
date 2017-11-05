@@ -18,6 +18,9 @@
 #include <sys/stat.h> // O_RDONLY ...
 #include <string.h> //strerror
 
+#include "utilitaires.h"
+
+
 void afficher_dossier(const char* chemin);
 
 #endif // DEMON_H

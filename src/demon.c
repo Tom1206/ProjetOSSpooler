@@ -8,7 +8,6 @@
 */
 
 #include "demon.h"
-#include "utilitaire.h"
 
 
 int main(int argc, char const *argv[]) {

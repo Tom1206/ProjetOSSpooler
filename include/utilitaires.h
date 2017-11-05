@@ -10,11 +10,14 @@
 #define UTILITAIRES_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <string.h> //strerror
 
+#define REPDEMON "../data"
+
 
 void gestErr(char * msg);
-
+char * getRepDemon();
 
 #endif // UTILITAIRES_H
