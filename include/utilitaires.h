@@ -14,7 +14,7 @@
 #include <errno.h>
 #include <string.h> //strerror
 
-#define REPDEMON "../data"
+#define REPSPOOL "../data/spool"
 
 //flag indiquant s'il faut afficher les messages d'erreurs ou non
 int _DEBUG_FLAG; 
@@ -22,5 +22,7 @@ int _DEBUG_FLAG;
 void gestErr(char * msg);
 char * getRepDemon();
 void debugInfo(char * msg);
+char * getRepSpool();
+void copyFile(const char * sourceFile, int fd);
 
 #endif // UTILITAIRES_H

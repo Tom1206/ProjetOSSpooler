@@ -16,9 +16,9 @@
 * Sinon renvoie la valeur de PROJETSE
 *
 */
-char * getRepDemon() {
+char * getRepSpool() {
     if (getenv("PROJETSE") == NULL) {
-        return REPDEMON;
+        return REPSPOOL;
     } else {
         return getenv("PROJETSE");
     }
@@ -41,4 +41,38 @@ void gestErr(char * msg){
 */
 void debugInfo(char * msg){
     printf("DEBUG: %s\n", msg);
+}
+
+/**
+* @brief recopie un fichier dans un autre
+* @param sourceFile le fichier source
+* @param targetFile le fichier cible
+* @return void
+*/
+void copyFile(const char * sourceFile, int fd) {
+
+    FILE *source, *target;
+    char ch;
+
+    source = fopen(sourceFile, "r");
+
+    if (source == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    target = fdopen(fd, "w");
+
+    if (target == NULL) {
+        fclose(source);
+        exit(EXIT_FAILURE);
+    }
+
+    // On copie tous les caractères
+    while ((ch = getc(source)) != EOF) {
+        putc(ch, target);
+    }
+
+    fclose(source);
+    fclose(target);
+
 }
