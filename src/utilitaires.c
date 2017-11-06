@@ -40,7 +40,9 @@ void gestErr(char * msg){
 * @return void
 */
 void debugInfo(char * msg){
-    printf("DEBUG: %s\n", msg);
+    if(_DEBUG_FLAG){
+        printf("DEBUG: %s\n", msg);        
+    }
 }
 
 /**

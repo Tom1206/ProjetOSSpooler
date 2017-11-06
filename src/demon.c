@@ -22,9 +22,10 @@ int main(int argc, char const *argv[]) {
         //arg debug
         if(strcmp(argv[i],"-d")==0){
             _DEBUG_FLAG = 1;
-            debugInfo("debug flag activated\n");
         }
     }
+    
+    debugInfo("debug flag activated\n");
 
     //note: le dossier du daemon n'a pas à être spécifié en paramètre
     const char* chemin = "/home"; 
