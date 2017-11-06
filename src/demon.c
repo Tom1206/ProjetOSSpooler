@@ -15,27 +15,33 @@ int main(int argc, char const *argv[]) {
     //(void)argv;
     printf("Demon\n");
 
+    int DELAY = 2;
     //analyse des arguments
     int i;
     for(i = 1; i<argc; i++){
-
         //arg debug
         if(strcmp(argv[i],"-d")==0){
             _DEBUG_FLAG = 1;
         }
+        if(strcmp(argv[i],"-i")==0){
+            DELAY = atoi(argv[i+1]);
+        }
     }
-    
-    debugInfo("debug flag activated\n");
 
+    debugInfo("debug flag activated");
+
+    char msg[100];
+    snprintf(msg,100,"délai d'analyse : %d secondes",DELAY);
+    debugInfo(msg);
     //note: le dossier du daemon n'a pas à être spécifié en paramètre
     const char* chemin = "/home"; 
     
-    //appel d'une fonction toutes les n secondes
-    int n = 2;
-    for(i = 0; i < 100000; i++){
+    //appel d'une fonction toutes les DELAY secondes
+    int CONTINUE = 1;
+    while(CONTINUE){
         afficher_dossier(chemin);
         printf("\n");
-        sleep(n);
+        sleep(DELAY);
     }
 
     return 0;
