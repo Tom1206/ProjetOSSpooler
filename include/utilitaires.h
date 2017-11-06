@@ -14,10 +14,11 @@
 #include <errno.h>
 #include <string.h> //strerror
 
-#define REPDEMON "../data"
+#define REPSPOOL "../data/spool"
 
 
 void gestErr(char * msg);
-char * getRepDemon();
+char * getRepSpool();
+void copyFile(const char * sourceFile, int fd);
 
 #endif // UTILITAIRES_H
