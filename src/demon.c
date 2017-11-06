@@ -15,9 +15,21 @@ int main(int argc, char const *argv[]) {
     //(void)argv;
     printf("Demon\n");
 
-    const char* chemin = (int)argc > 1 ? argv[1] : "/home";
-    //appel d'une fonction toutes les n secondes
+    //analyse des arguments
     int i;
+    for(i = 1; i<argc; i++){
+
+        //arg debug
+        if(strcmp(argv[i],"-d")==0){
+            _DEBUG_FLAG = 1;
+            debugInfo("debug flag activated\n");
+        }
+    }
+
+    //note: le dossier du daemon n'a pas à être spécifié en paramètre
+    const char* chemin = "/home"; 
+    
+    //appel d'une fonction toutes les n secondes
     int n = 2;
     for(i = 0; i < 100000; i++){
         afficher_dossier(chemin);
