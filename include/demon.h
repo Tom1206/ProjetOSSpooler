@@ -23,5 +23,5 @@
 
 void afficher_dossier(const char* chemin); //TODO : penser à supprimer cette fonction (de test) avant le rendu du projet
 void analyser_dossier(const char* chemin);
-
+void gzip(const char * chemin, const char* nom_fichier);
 #endif // DEMON_H

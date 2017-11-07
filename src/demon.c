@@ -96,7 +96,9 @@ void analyser_dossier(const char* chemin){
                 snprintf(msg,sizeof(msg),"2 premiers carac. du nom du fichier = %s", substr);                
                 debugInfo(msg);
                 if(strcmp(substr,"j_")==0){
+                    //dans le cas où c'est un fichier à traiter
                     debugInfo("    -> fichier à analyser");
+                    gzip(path, entry->d_name);
                 }
                 else{
                     debugInfo("    -> fichier à ne PAS analyser");
@@ -144,3 +146,25 @@ void afficher_dossier(const char* chemin){
         closedir(dir);
     }
     
+
+/**system
+* @brief Utilise le programme gzip afin de compresser un fichier
+* @param chemin L'emplacement du fichier à compresser
+* @param nom_fichier Nom du fichier source
+* @return void
+*/
+
+void gzip(const char * chemin, const char* nom_fichier){
+    snprintf(msg, sizeof(msg),"-> gzip : fichier à compresser : %s", chemin);
+    debugInfo(msg);
+    //char cmd[2*strlen(chemin) + 14 -2];
+    char cmd[1024];
+    char * destination = (char *)chemin; //dossier où se trouvera le fichier compressé
+    destination[strlen(chemin)-strlen(nom_fichier)] = '\0';
+    snprintf(cmd, sizeof(cmd),"gzip --quiet < %s > %s/%s.gz", 
+        chemin, 
+        destination,
+        nom_fichier+2);
+    system(cmd); //TODO : compresser le fichier dans un fichier temproraire
+    //TODO : trouver pourquoi gzip afficher "gzip: stdin: Is a directory"
+}
