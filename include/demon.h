@@ -21,6 +21,7 @@
 #include "utilitaires.h"
 
 
-void afficher_dossier(const char* chemin);
+void afficher_dossier(const char* chemin); //TODO : penser à supprimer cette fonction (de test) avant le rendu du projet
+void analyser_dossier(const char* chemin);
 
 #endif // DEMON_H
