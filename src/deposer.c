@@ -18,15 +18,19 @@ int main(int argc, char const *argv[]) {
             exit(EXIT_FAILURE);
         }
 
-        // On crée le fichier job dans
+        // On crée le fichier job, de la forme j_nomDuFichierOriginal_XXXXXX
         char tmpName[512];
         strncpy(tmpName, getRepSpool(), 512);
         strncat(tmpName, "/j_", 512);
-        //strncat(tmpName, argv[i], 512);
+        char * totalName = malloc(sizeof(char));
+        strcpy(totalName, argv[i]);
+        strncat(tmpName, basename(totalName), 512);
+        free(totalName);
         strncat(tmpName, "_XXXXXX", 512);
-        printf("%s\n", tmpName);
+        //printf("%s\n", tmpName);
         int fd = mkstemp(tmpName);
 
+        // On copie le fichier à ajouter dans le nouveau fichier crée
         copyFile(argv[i], fd);
 
     }

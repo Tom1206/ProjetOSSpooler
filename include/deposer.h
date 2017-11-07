@@ -15,6 +15,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <libgen.h>
 
 #include "utilitaires.h"
 

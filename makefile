@@ -1,7 +1,7 @@
 CC= gcc
 CFLAGS= -W -Wall -Werror
 LDFLAGS=
-INCLUDES = -I "./include"
+INCLUDES= -I "./include"
 EXEC= bin/demon bin/deposer
 SRC= $(wildcard src/*.c)
 OBJ= $(patsubst src/%.c,obj/%.o,$(SRC))
@@ -24,3 +24,4 @@ clean:
 
 mrproper: clean
 	rm -rf $(EXEC)
+	rm -rf ./data/spool/*
