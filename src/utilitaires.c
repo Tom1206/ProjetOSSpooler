@@ -26,7 +26,7 @@ char * getRepSpool() {
 
 /**
 * @brief Affiche proprement un message d'erreur
-* @param msg Permet de rajouter une info supplémentaire 
+* @param msg Permet de rajouter une info supplémentaire
 * (ex: la fonction d'où provient l'erreur)
 * @return void
 */
@@ -41,7 +41,7 @@ void gestErr(char * msg){
 */
 void debugInfo(char * msg){
     if(_DEBUG_FLAG){
-        printf("DEBUG: %s\n", msg);        
+        printf("DEBUG: %s\n", msg);
     }
 }
 

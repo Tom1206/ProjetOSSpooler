@@ -2,7 +2,7 @@ CC= gcc
 CFLAGS= -W -Wall
 LDFLAGS=
 INCLUDES= -I "./include"
-EXEC= bin/demon bin/deposer bin/retirer
+EXEC= bin/demon bin/deposer bin/retirer bin/lister
 SRC= $(wildcard src/*.c)
 OBJ= $(patsubst src/%.c,obj/%.o,$(SRC))
 
@@ -15,6 +15,9 @@ bin/deposer: obj/deposer.o obj/utilitaires.o
 	$(CC) $(INCLUDES) -o $@ $^ $(LDFLAGS)
 
 bin/retirer: obj/retirer.o obj/utilitaires.o
+	$(CC) $(INCLUDES) -o $@ $^ $(LDFLAGS)
+
+bin/lister: obj/lister.o obj/utilitaires.o
 	$(CC) $(INCLUDES) -o $@ $^ $(LDFLAGS)
 
 obj/%.o: src/%.c
