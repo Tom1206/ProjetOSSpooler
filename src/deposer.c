@@ -8,6 +8,7 @@
 */
 
 #include "deposer.h"
+#include "utilitaires.h"
 
 int main(int argc, char const *argv[]) {
     // Pour chacuns des fichiers en paramètres...
@@ -21,6 +22,14 @@ int main(int argc, char const *argv[]) {
         // On crée le fichier job, de la forme j_nomDuFichierOriginal_XXXXXX
         char tmpName[512];
         strncpy(tmpName, getRepSpool(), 512);
+        //TODO : attention, le répertoire renvoyé lorsque la variable env. PROJETSE
+        //n'est pas définie (REPSPOOL, qui vaut "../data/spool") ne peut pas être utilisé
+        //par mkstemp : les chemins relatifs ne fonctionnent pas (sur ma machine).
+        //même lorsque le dossier ../data/spool existe.
+        //ex: le remplacement de l'instruction ci-dessus par 
+        //strncpy(tmpName, "/home/Travaux/SE/projet_SE_git/data/spool", 512);
+        //rend le programme fonctionnel.
+
         strncat(tmpName, "/j_", 512);
         char * totalName = malloc(sizeof(char));
         strcpy(totalName, argv[i]);
@@ -29,6 +38,13 @@ int main(int argc, char const *argv[]) {
         strncat(tmpName, "_XXXXXX", 512);
         //printf("%s\n", tmpName);
         int fd = mkstemp(tmpName);
+        //TODO : vérifier que le dossier data/spool existe, sinon le programme crash
+
+        if(fd == -1){
+            char msg[1024];
+            snprintf(msg,sizeof(msg),"deposer -> mkstemp \n tmpName = %s",tmpName);
+            gestErr(msg);
+        }
 
         // On copie le fichier à ajouter dans le nouveau fichier crée
         copyFile(argv[i], fd);
