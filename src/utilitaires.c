@@ -143,3 +143,27 @@ int getFileSize(char* chemin){
     fstat(fd, &buf);
     return buf.st_size;
 }
+
+/**
+* @brief Permet de vérifier si le le spool est vérrouillé
+* @return 0 si non vérrouillé, 1 si vérrouillé
+*/
+int verifVerrou() {
+
+    // On génère le chemin du verrou
+    char cheminVerrou[255];
+    snprintf(cheminVerrou, sizeof(cheminVerrou), "%s/verrou", getRepSpool());
+
+    int fd = open(cheminVerrou, O_WRONLY);
+
+    // S'il est vérouillé, on return 1
+    lockf(fd, F_TEST, 0);
+    if (errno == EAGAIN) {
+        char debug[512];
+        snprintf(debug, sizeof(debug),"Liste verrouillée");
+        debugInfo(debug);
+        return 1;
+    }
+
+    return 0;
+}

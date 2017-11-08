@@ -20,13 +20,13 @@ int main(int argc, char const *argv[]) {
     int DELAY = 2;
     //analyse des options donnés en arguments
     //note: le dernier arg est l'emplacement du fichier du démon
-    
+
     char c;
     while ((c = getopt(argc, (char * const*)argv, "di:")) != -1){
 
         switch (c){
             case 'd':
-                _DEBUG_FLAG = 1;    
+                _DEBUG_FLAG = 1;
                 debugInfo("param d");
                 break;
             case 'i':
@@ -44,7 +44,7 @@ int main(int argc, char const *argv[]) {
     int fd = open(cheminVerrou, O_CREAT | O_APPEND | O_WRONLY, 0777);
     write(fd,verrou,strlen(verrou));
     close(fd);
-    
+
 
     chemin_log_demon = (char*)argv[argc-1];
     snprintf(msg,sizeof(msg),"Chemin du log du démon : %s", chemin_log_demon);
@@ -77,6 +77,10 @@ int main(int argc, char const *argv[]) {
     while(CONTINUE){
         snprintf(msg,100,"analyse du dossier %s",getRepSpool());
         debugInfo(msg);
+
+        // On vérifie le verrou, et on bloque tant que verrouillé
+        while (verifVerrou() != 0);
+
         //afficher_dossier(getRepSpool());
         analyser_dossier(getRepSpool());
         printf("\n\n");
@@ -257,7 +261,7 @@ int gzip(const char * chemin, const char* nom_fichier){
         sortie,getRealFileName((char*)nom_fichier));// nom_fichier+2);
         debugInfo(cmd);
 
-        
+
     //return system(cmd); //TODO : compresser le fichier dans un fichier temproraire
     //https://www.unix.com/programming/53220-execl-redirecting-output-text-files.html
     return execl("/bin/gzip","gzip", cmd, (char *) 0);//TODO : utiliser un fork et exec* au lieu de la fonction system()
