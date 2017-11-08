@@ -2,6 +2,7 @@
     "files.associations": {
         "utilitaires.h": "c",
         "demon.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "lister.h": "c"
     }
 }
