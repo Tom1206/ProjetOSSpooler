@@ -16,8 +16,8 @@
 #include <time.h> //récupérer date courante
 
 
-#include <sys/types.h> 
-#include <sys/stat.h> 
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <pwd.h> //getpwuid()
 #include <fcntl.h> //open()
@@ -39,5 +39,6 @@ char* getUserID(char* chemin);
 char* getRealFileName(char* rawFileName);
 int getFileSize(char* chemin);
 char* substr(char *src,int pos,int len);
+int verifVerrou();
 
 #endif // UTILITAIRES_H

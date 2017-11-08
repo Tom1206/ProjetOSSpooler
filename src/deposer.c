@@ -34,12 +34,12 @@ int main(int argc, char const *argv[]) {
             exit(EXIT_FAILURE);
         }
 
+        // On verrouille le temps d'ajouter un élément dans la file
         int verrou = open(cheminVerrou, O_WRONLY);
         lockf(verrou, F_LOCK, 0);
 
-        if(lockf(verrou, F_TEST, 0) == EAGAIN) {
-            printf("Verrouillé !\n");
-        }
+        while(1);
+
 
         // On crée le fichier job, de la forme j_nomDuFichierOriginal_XXXXXX
         char tmpName[512];
@@ -64,6 +64,9 @@ int main(int argc, char const *argv[]) {
 
         // On copie le fichier à ajouter dans le nouveau fichier crée
         copyFile(argv[i], fd);
+
+        // Et on ferme le verrou
+        close(verrou);
 
     }
     return 0;
