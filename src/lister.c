@@ -12,20 +12,50 @@
 
 int main(int argc, char const *argv[]) {
 
-    // char c;
-    // while ((c = getopt(argc, (char * const*)argv, "di:")) != -1){
-    //
-    //     switch (c){
-    //         case 'd':
-    //             _DEBUG_FLAG = 1;
-    //             debugInfo("param d");
-    //             break;
-    //         case 'i':
-    //             DELAY = atoi(optarg);
-    //             debugInfo("param i");
-    //             break;
-    //     }
-    // }
+    // On vérifie si on est le même utilisateur que celui qui a lancé le spool
+    // Pour ce faire on vérifie qui a crée le verrou
+
+    // On génère le chemin du verrou
+    char cheminVerrou[255];
+    snprintf(cheminVerrou, sizeof(cheminVerrou), "%s/verrou", getRepSpool());
+
+    // bonUID vaut 0 si même utilisateur que spool, et autre chose sinon
+    int bonUID = strcmp(getUserID(cheminVerrou), getlogin());
+
+    // afficheNom vaut 0 si on doit afficher les noms de fichier, et autre chose sinon
+    int afficheNom = 1;
+
+    // testUIDaAfficher vaut 0 si on doit afficher un utilisateur précis, et autre chose sinon
+    int testUIDaAfficher = 1;
+    // Dans le cas 0, l'utilisateur à afficher
+    char * UIDaAfficher;
+
+    // On teste les options
+    int c;
+    while ((c = getopt(argc, (char * const*)argv, "lu:")) != -1){
+
+        switch (c) {
+            case 'l':
+                if (bonUID == 0) {
+                    afficheNom = 0;
+                } else {
+                    printf("Options -l ou -u sont limitées au propriétaire du spool\n");
+                    return 1;
+                }
+                break;
+            case 'u':
+                if (bonUID == 0) {
+                    testUIDaAfficher = 0;
+                    UIDaAfficher = malloc(strlen(optarg) * sizeof(char));
+                    UIDaAfficher = optarg;
+                } else {
+                    printf("Options -l ou -u sont limitées au propriétaire du spool\n");
+                    return 1;
+                }
+                break;
+        }
+    }
+
 
     DIR *dp ;
     struct dirent *d ;
@@ -49,8 +79,8 @@ int main(int argc, char const *argv[]) {
                 id[6] = '\0';
                 int j = 5;
                 for (int i = strlen(d->d_name) - 1; i > (int)strlen(d->d_name) - 7; i--) {
-                  id[j] = d->d_name[i];
-                  j--;
+                    id[j] = d->d_name[i];
+                    j--;
                 }
 
 
@@ -59,8 +89,8 @@ int main(int argc, char const *argv[]) {
                 name[(strlen(d->d_name) - 9)] = '\0';
                 j = 0;
                 for (int i = 2; i < (int)strlen(d->d_name) - 7; i++) {
-                  name[j] = d->d_name[i];
-                  j++;
+                    name[j] = d->d_name[i];
+                    j++;
                 }
 
 
@@ -82,8 +112,23 @@ int main(int argc, char const *argv[]) {
                 strcpy(user, pwd->pw_name);
 
 
-                // On affiche le tout
-                printf("%s %s %s       %s\n", id, name, user, date);
+                // On affiche le tout en fonction des options
+
+                if (testUIDaAfficher == 0) {
+                    if (strcmp(UIDaAfficher, user) == 0) {
+                        printf("%s %s ", id, user);
+                        if (afficheNom == 0) {
+                            printf("%s", name);
+                        }
+                        printf("     %s\n", date);
+                    }
+                } else {
+                    printf("%s %s ", id, user);
+                    if (afficheNom == 0) {
+                        printf("%s", name);
+                    }
+                    printf("     %s\n", date);
+                }
 
                 // On libère la mémoire
                 free(id);
@@ -92,12 +137,9 @@ int main(int argc, char const *argv[]) {
                 free(date);
 
             }
-
-
         }
     }
 
-    printf("%s\n", getlogin());
 
     // On ferme le répertoire
     if (closedir(dp) == -1) {
