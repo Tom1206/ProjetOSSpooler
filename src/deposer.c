@@ -27,7 +27,19 @@ int main(int argc, char const *argv[]) {
         }
 
         // On génère l'adresse du verrou et on teste son existence
-        
+        char cheminVerrou[255];
+        snprintf(cheminVerrou, sizeof(cheminVerrou), "%s/verrou", getRepSpool());
+        if (access(cheminVerrou, F_OK) != 0) {
+            printf("Le verrou n'existe pas\n");
+            exit(EXIT_FAILURE);
+        }
+
+        int verrou = open(cheminVerrou, O_WRONLY);
+        lockf(verrou, F_LOCK, 0);
+
+        if(lockf(verrou, F_TEST, 0) == EAGAIN) {
+            printf("Verrouillé !\n");
+        }
 
         // On crée le fichier job, de la forme j_nomDuFichierOriginal_XXXXXX
         char tmpName[512];

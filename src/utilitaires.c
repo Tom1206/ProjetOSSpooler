@@ -54,7 +54,7 @@ void debugInfo(char * msg){
 void copyFile(const char * sourceFile, int fd) {
 
     FILE *source, *target;
-    char ch;
+    int ch;
 
     source = fopen(sourceFile, "r");
 
@@ -119,17 +119,17 @@ char* getUserID(char* chemin){
     return user;
 }
 
-char* substr(char *src,int pos,int len) { 
-    char *dest=NULL;                        
-    if (len>0) {                  
-      /* allocation et mise à zéro */          
-      dest = calloc(len+1, 1);      
-      /* vérification de la réussite de l'allocation*/  
+char* substr(char *src,int pos,int len) {
+    char *dest=NULL;
+    if (len>0) {
+      /* allocation et mise à zéro */
+      dest = calloc(len+1, 1);
+      /* vérification de la réussite de l'allocation*/
       if(NULL != dest) {
-          strncat(dest,src+pos,len);            
+          strncat(dest,src+pos,len);
       }
-    }                                       
-    return dest;  
+    }
+    return dest;
 }
 
 char* getRealFileName(char* rawFileName){
@@ -143,4 +143,3 @@ int getFileSize(char* chemin){
     fstat(fd, &buf);
     return buf.st_size;
 }
-
