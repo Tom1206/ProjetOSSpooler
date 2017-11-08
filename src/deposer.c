@@ -51,6 +51,7 @@ int main(int argc, char const *argv[]) {
         strncat(tmpName, "_XXXXXX", 512);
         //printf("%s\n", tmpName);
         int fd = mkstemp(tmpName);
+        printf("%s\n", getIdFromFileName(tmpName));
 
         //TODO : vérifier que le dossier data/spool existe, sinon le programme crash
 

@@ -10,6 +10,7 @@
 #include "retirer.h"
 
 int main(int argc, char const *argv[]) {
+    
     // Pour chacuns des id en paramètres...
     for (int i = 1; i < argc; i++) {
 
@@ -54,7 +55,8 @@ int main(int argc, char const *argv[]) {
         }
 
         if (test == 0) {
-            printf("Cannot find id %s\n", argv[i]);
+            //printf("Cannot find id %s\n", argv[i]);
+            return 1;
         }
 
     }

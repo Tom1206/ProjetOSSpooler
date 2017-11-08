@@ -53,6 +53,8 @@ int main(int argc, char const *argv[]) {
                     return 1;
                 }
                 break;
+            default:
+                return 1;
         }
     }
 
@@ -120,14 +122,14 @@ int main(int argc, char const *argv[]) {
                         if (afficheNom == 0) {
                             printf("%s", name);
                         }
-                        printf("     %s\n", date);
+                        printf("     %s", date);
                     }
                 } else {
                     printf("%s %s ", id, user);
                     if (afficheNom == 0) {
                         printf("%s", name);
                     }
-                    printf("     %s\n", date);
+                    printf("     %s", date);
                 }
 
                 // On libère la mémoire
