@@ -13,8 +13,10 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h> //strerror
+#include <time.h> //récupérer date courante
 
-#define REPSPOOL "../data/spool"
+
+#define REPSPOOL "../data/spool" //TODO : ne fonctionne pas selon l'endroit d'où on lance le programme (demon.c -> analyser_dossier() -> opendir())
 
 //flag indiquant s'il faut afficher les messages d'erreurs ou non
 int _DEBUG_FLAG;
@@ -24,5 +26,7 @@ void debugInfo(char * msg);
 char * getRepSpool();
 void copyFile(const char * sourceFile, int fd);
 void deleteFile(const char* path);
+char* getIdFromFileName(char* fileName);
+char* getCurrentDate();
 
 #endif // UTILITAIRES_H

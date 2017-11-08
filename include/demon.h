@@ -17,7 +17,6 @@
 #include <fcntl.h> //open()
 #include <sys/stat.h> // O_RDONLY ...
 #include <string.h> //strerror
-#include <time.h> //récupérer date courante
 
 #include "utilitaires.h"
 

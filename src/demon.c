@@ -9,7 +9,8 @@
 
 #include "demon.h"
 
-char msg[512];
+char msg[512]; //pour les messages de debug
+char msg_log[512]; //pour les messages dans le log
 char* chemin_log_demon;
 int main(int argc, char const *argv[]) {
     //(void)argc;
@@ -40,15 +41,15 @@ int main(int argc, char const *argv[]) {
     debugInfo(msg);
     deleteFile(chemin_log_demon);
     //on récupère la date courante et on enregistre la date de démarrage dans le log
-    time_t rawtime;
+    /*time_t rawtime;
     struct tm * timeinfo;
     time (&rawtime);
     timeinfo = localtime (&rawtime);
-    char date_courante[100];
-    strftime(date_courante, sizeof(date_courante), "%c", timeinfo);
-    char log_demarrage[150];
-    snprintf(log_demarrage, sizeof(log_demarrage), "Starting at %s\n",date_courante);
-    log_demon(log_demarrage); //on enregistre la date de lancement du démon
+    */
+    char* date_courante = getCurrentDate();
+    //char log_demarrage[150];
+    snprintf(msg_log, sizeof(msg_log), "Starting at %s\n",date_courante);
+    log_demon(msg_log); //on enregistre la date de lancement du démon
 
     debugInfo("debug flag activated"); //s'affiche seulement si -d a été donné
 
@@ -126,12 +127,21 @@ void analyser_dossier(const char* chemin){
                 if(strcmp(substr,"j_")==0){
                     //dans le cas où c'est un fichier à traiter
                     debugInfo("    -> fichier à analyser");
+                    //on log les premières étapes du spool
+                    snprintf(msg_log,sizeof(msg_log),"id=%s orgdate=%s user=NA\n",
+                    getIdFromFileName(entry->d_name),
+                    getCurrentDate()
+                    );
+                    log_demon(msg_log);
                     if(gzip(path, entry->d_name)==-1){
                         gestErr("analyser_dossier() -> gzip()");
                     }else{
-                        if(log_demon("test\n")==-1){
+                        //TODO : tâche terminée, on enregistre le reste des infos dans le log
+                        /*
+                        if(log_demon(msg_log)==-1){
                             gestErr("analyser_dossier() -> log_demon()");
                         }
+                        */
                     }
 
                 }
@@ -205,7 +215,7 @@ int gzip(const char * chemin, const char* nom_fichier){
         char* sortie;
         sortie = (char*)chemin; //chemin complet du fichier à compresser
         sortie[strlen(chemin)-strlen(nom_fichier)] = '\0'; //on ne garde que le chemin du repertoire
-        snprintf(cmd, sizeof(cmd),"gzip < %s/%s > %s%s.gz", 
+        snprintf(cmd, sizeof(cmd),"gzip < %s%s > %s%s.gz", 
         chemin,nom_fichier,
         sortie,nom_fichier+2);
         debugInfo(cmd);

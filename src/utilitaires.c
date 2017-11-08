@@ -88,3 +88,24 @@ void deleteFile(const char* path){
     remove(path);
 }
 
+char* getIdFromFileName(char* fileName){
+    // On récupere l'id
+    char * id = malloc(7 * sizeof(char));
+    id[6] = '\0';
+    int j = 5;
+    for (int i = strlen(fileName) - 1; i > (int)strlen(fileName) - 7; i--) {
+      id[j] = fileName[i];
+      j--;
+    }
+    return id;
+}
+char* getCurrentDate(){
+    time_t rawtime;
+    struct tm * timeinfo;
+    time (&rawtime);
+    timeinfo = localtime (&rawtime);
+    char* date_courante = malloc(sizeof(char)*100);
+    strftime(date_courante, 100, "%c", timeinfo);
+    return date_courante;
+}
+
