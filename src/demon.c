@@ -153,55 +153,35 @@ void analyser_dossier(const char* chemin){
 
                     char c_path[strlen(path)];
                     strcpy(c_path, path);
+                    if(gzip(c_path, entry->d_name)==-1){ //si erreur
+                        gestErr("analyser_dossier() -> gzip()");
+                        log_demon("exit=1\n");
+                    }else{
+                        //TODO : tâche terminée, on enregistre le reste des infos dans le log
+                        char chemin_fichier_zip[512];
+                        snprintf(chemin_fichier_zip, sizeof(chemin_fichier_zip),"%s%s.gz",
+                            substr(path,0,strlen(path)-strlen(entry->d_name)),
+                            getRealFileName(entry->d_name)
+                        );
+                        //debugInfo("!!! chemin_fichier_zip = ");
+                        //debugInfo(chemin_fichier_zip);
+                        snprintf(msg_log, sizeof(msg_log), " curdate=%s gzipsize=%d exit=0\n",
+                        getCurrentDate(),
+                        getFileSize(chemin_fichier_zip)
+                        );
+                        log_demon(msg_log);
 
-                    //on fait un fork
-                    pid_t child_pid;
-                    int status;
-            
-                    /* get and print my pid and my parent's pid. */
-            
-                    debugInfo("!!! FORK");
-                    /* print error message if fork() fails */
-                    if ((child_pid = fork()) < 0){
-                        gestErr("demon.c -> gzip() -> fork()");
-                    }
-                    
-                    if (child_pid == 0){       
-                        debugInfo("FILS");  
-                        gzip(c_path, entry->d_name); 
-                        exit(1);
-                        //gzip() utilise execl() donc si on arrive ici 
-                        //c'est que execl() ne s'est pas correctement déroulé
-                    }
-                    else{                  
-                        //on est dans le proc. père
-                        debugInfo("PERE"); //on attend que le processus fils ait fini
-                        wait(&status); 
-                        //on vérifie que le proc. fils s'est correctement déroulé
-                        if(WIFEXITED(status)){ //bon déroulement
-                            //TODO : tâche terminée, on enregistre le reste des infos dans le log
-                            char chemin_fichier_zip[512];
-                            snprintf(chemin_fichier_zip, sizeof(chemin_fichier_zip),"%s%s.gz",
-                                substr(path,0,strlen(path)-strlen(entry->d_name)),
-                                getRealFileName(entry->d_name)
-                            );
-                            //debugInfo("!!! chemin_fichier_zip = ");
-                            //debugInfo(chemin_fichier_zip);
-                            snprintf(msg_log, sizeof(msg_log), " curdate=%s gzipsize=%d exit=0\n",
-                            getCurrentDate(),
-                            getFileSize(chemin_fichier_zip)
-                            );
-                            log_demon(msg_log);
+                        //on supprime la tâche
+                        snprintf(msg,sizeof(msg), "suppression de %s", path);
+                        debugInfo(msg);
+                        deleteFile(path);
 
-                            //on supprime la tâche
-                            snprintf(msg,sizeof(msg), "suppression de %s", path);
-                            debugInfo(msg);
-                            deleteFile(path);
+
+                        /*
+                        if(log_demon(msg_log)==-1){
+                            gestErr("analyser_dossier() -> log_demon()");
                         }
-                        else{ //erreur
-                            gestErr("analyser_dossier() -> gzip()");
-                            log_demon("exit=1\n");
-                        }
+                        */
                     }
 
                 }
@@ -258,29 +238,27 @@ void afficher_dossier(const char* chemin){
 * @param nom_fichier Nom du fichier source
 * @return void
 */
-void gzip(const char * chemin, const char* nom_fichier){
+int gzip(const char * chemin, const char* nom_fichier){
     snprintf(msg, sizeof(msg),"-> gzip : fichier à compresser : %s", chemin);
     debugInfo(msg);
-        //return system(cmd); //TODO : compresser le fichier dans un fichier temproraire
-        //https://www.unix.com/programming/53220-execl-redirecting-output-text-files.html
-        
-        int fd;
-        char chemin_sortie_zip[1024];
-        strcpy(chemin_sortie_zip, chemin);
-        chemin_sortie_zip[strlen(chemin)-strlen(nom_fichier)] = '\0';
-        char chemin_final_zip[1024];
-        snprintf(chemin_final_zip, sizeof(chemin_final_zip), "%s%s.gz",
-            chemin_sortie_zip, nom_fichier+2
-        );
-        debugInfo("$$$$ chemin_final_zip = ");
-        debugInfo(chemin_final_zip);
-        if ((fd = open(chemin_final_zip, O_RDWR | O_CREAT)) == -1){ 
-            gestErr("demon.c -> gzip() -> open()");
-        }
-        
-        dup2(fd, STDOUT_FILENO); /*copy the file descriptor fd into standard output*/
-        close(fd);               /* close the file descriptor as we don't need it more  */
-                                                   //si on est dans le proc. fils
-        execl("/bin/gzip", "gzip", "-n",  chemin_final_zip, (char *)0); //TODO : utiliser un fork et exec* au lieu de la fonction system()
-        //gestErr("demon.c -> gzip() -> fork() -> execl()");
+    //char cmd[2*strlen(chemin) + 14 -2];
+    char cmd[1024];
+    //char * destination = (char *)chemin; //dossier où se trouvera le fichier compressé
+    //destination[strlen(chemin)-strlen(nom_fichier)] = '\0';
+    /*
+    snprintf(cmd, sizeof(cmd),"gzip --quiet < %s > %s/%s.gz", 
+        chemin, 
+        destination,
+        nom_fichier+2);
+        */
+        //chemin complet du fichier de sortie;
+        char* sortie;
+        sortie = (char*)chemin; //chemin complet du fichier à compresser
+        sortie[strlen(chemin)-strlen(nom_fichier)] = '\0'; //on ne garde que le chemin du repertoire
+        snprintf(cmd, sizeof(cmd),"gzip -n < %s%s > %s%s.gz", 
+        chemin,nom_fichier,
+        sortie,getRealFileName((char*)nom_fichier));// nom_fichier+2);
+        debugInfo(cmd);
+    return system(cmd); //TODO : compresser le fichier dans un fichier temproraire
+    //TODO : utiliser un fork et exec* au lieu de la fonction system()
 }
