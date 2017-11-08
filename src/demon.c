@@ -20,19 +20,19 @@ int main(int argc, char const *argv[]) {
     int DELAY = 2;
     //analyse des options donnés en arguments
     //note: le dernier arg est l'emplacement du fichier du démon
-    int i;
+    
+    char c;
+    while ((c = getopt(argc, (char * const*)argv, "di:")) != -1){
 
-    int shift_last_param = 0;
-    //permet de savoir quel est le rang du dernier paramètre (chemin log démon)
-
-    for(i = 1; i<argc - 1; i++){
-        //arg debug
-        if(strcmp(argv[i],"-d")==0){
-            _DEBUG_FLAG = 1;
-        }
-        if(strcmp(argv[i],"-i")==0){
-            DELAY = atoi(argv[i+1]);
-            shift_last_param++;
+        switch (c){
+            case 'd':
+                _DEBUG_FLAG = 1;    
+                debugInfo("param d");
+                break;
+            case 'i':
+                DELAY = atoi(optarg);
+                debugInfo("param i");
+                break;
         }
     }
 
@@ -42,8 +42,9 @@ int main(int argc, char const *argv[]) {
     snprintf(verrou, sizeof(verrou),"J'suis le verrou !");
     snprintf(cheminVerrou, sizeof(cheminVerrou), "%s/verrou", getRepSpool());
     int fd = open(cheminVerrou, O_CREAT | O_APPEND | O_WRONLY, 0777);
-    return write(fd,verrou,strlen(verrou));
+    write(fd,verrou,strlen(verrou));
     close(fd);
+    
 
     chemin_log_demon = (char*)argv[argc-1];
     snprintf(msg,sizeof(msg),"Chemin du log du démon : %s", chemin_log_demon);
@@ -251,10 +252,13 @@ int gzip(const char * chemin, const char* nom_fichier){
         char* sortie;
         sortie = (char*)chemin; //chemin complet du fichier à compresser
         sortie[strlen(chemin)-strlen(nom_fichier)] = '\0'; //on ne garde que le chemin du repertoire
-        snprintf(cmd, sizeof(cmd),"gzip -n < %s%s > %s%s.gz",
+        snprintf(cmd, sizeof(cmd)," -n < %s%s > %s%s.gz",
         chemin,nom_fichier,
         sortie,getRealFileName((char*)nom_fichier));// nom_fichier+2);
         debugInfo(cmd);
-    return system(cmd); //TODO : compresser le fichier dans un fichier temproraire
-    //TODO : utiliser un fork et exec* au lieu de la fonction system()
+
+        
+    //return system(cmd); //TODO : compresser le fichier dans un fichier temproraire
+    //https://www.unix.com/programming/53220-execl-redirecting-output-text-files.html
+    return execl("/bin/gzip","gzip", cmd, (char *) 0);//TODO : utiliser un fork et exec* au lieu de la fonction system()
 }
