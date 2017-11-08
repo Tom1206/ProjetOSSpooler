@@ -38,8 +38,6 @@ int main(int argc, char const *argv[]) {
         int verrou = open(cheminVerrou, O_WRONLY);
         lockf(verrou, F_LOCK, 0);
 
-        while(1);
-
 
         // On crée le fichier job, de la forme j_nomDuFichierOriginal_XXXXXX
         char tmpName[512];

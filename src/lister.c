@@ -11,8 +11,21 @@
 
 
 int main(int argc, char const *argv[]) {
-    (void) argc;
-    (void) argv;
+
+    // char c;
+    // while ((c = getopt(argc, (char * const*)argv, "di:")) != -1){
+    //
+    //     switch (c){
+    //         case 'd':
+    //             _DEBUG_FLAG = 1;
+    //             debugInfo("param d");
+    //             break;
+    //         case 'i':
+    //             DELAY = atoi(optarg);
+    //             debugInfo("param i");
+    //             break;
+    //     }
+    // }
 
     DIR *dp ;
     struct dirent *d ;
