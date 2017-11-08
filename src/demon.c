@@ -281,6 +281,6 @@ void gzip(const char * chemin, const char* nom_fichier){
         dup2(fd, STDOUT_FILENO); /*copy the file descriptor fd into standard output*/
         close(fd);               /* close the file descriptor as we don't need it more  */
                                                    //si on est dans le proc. fils
-        execl("/bin/gzip", "gzip", "-n", "-f", chemin, (char *)0); //TODO : utiliser un fork et exec* au lieu de la fonction system()
+        execl("/bin/gzip", "gzip", "-n",  chemin_final_zip, (char *)0); //TODO : utiliser un fork et exec* au lieu de la fonction system()
         //gestErr("demon.c -> gzip() -> fork() -> execl()");
 }
