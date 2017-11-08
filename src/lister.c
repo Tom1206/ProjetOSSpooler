@@ -22,7 +22,7 @@ int main(int argc, char const *argv[]) {
 
         if (strcmp(d->d_name, ".") != 0 && strcmp(d->d_name, "..") != 0) {
 
-            // On récupere l'id
+            // On récupere l'id (fin du nom de fichier dans le spool)
             char * id = malloc(7 * sizeof(char));
             id[6] = '\0';
             int j = 5;
@@ -32,7 +32,7 @@ int main(int argc, char const *argv[]) {
             }
 
 
-            // On récupère le nom de fichier
+            // On récupère le nom de fichier (milieu du nom de fichier dans le spool)
             char * name = malloc((strlen(d->d_name) - 8) * sizeof(char));
             name[(strlen(d->d_name) - 9)] = '\0';
             j = 0;
@@ -42,7 +42,7 @@ int main(int argc, char const *argv[]) {
             }
 
 
-            // On récupère la date
+            // On récupère la date (date de dernière modification)
             char path[512];
             strncpy(path, getRepSpool(), 512);
             strncat(path, "/", 512);
@@ -60,16 +60,24 @@ int main(int argc, char const *argv[]) {
             strcpy(user, pwd->pw_name);
 
 
-
+            // On affiche le tout
             printf("%s %s %s       %s\n", id, name, user, date);
+
+            // On libère la mémoire
+            free(id);
+            free(name);
+            free(user);
+            free(date);
 
         }
     }
 
+    printf("%s\n", getlogin());
+
+    // On ferme le répertoire
     if (closedir(dp) == -1) {
         debugInfo("Erreur à la fermeture du fichier");
     }
-
 
     return 0;
 }
