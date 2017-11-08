@@ -109,3 +109,38 @@ char* getCurrentDate(){
     return date_courante;
 }
 
+char* getUserID(char* chemin){
+    struct stat attr;
+    stat(chemin, &attr);
+    struct passwd *pwd;
+    pwd = getpwuid(attr.st_uid);
+    char * user = malloc(strlen(pwd->pw_name) * sizeof(char));
+    strcpy(user, pwd->pw_name);
+    return user;
+}
+
+char* substr(char *src,int pos,int len) { 
+    char *dest=NULL;                        
+    if (len>0) {                  
+      /* allocation et mise à zéro */          
+      dest = calloc(len+1, 1);      
+      /* vérification de la réussite de l'allocation*/  
+      if(NULL != dest) {
+          strncat(dest,src+pos,len);            
+      }
+    }                                       
+    return dest;  
+}
+
+char* getRealFileName(char* rawFileName){
+    //(void*)rawFileName;
+    return substr(rawFileName,2,strlen(rawFileName)-7-2);
+}
+
+int getFileSize(char* chemin){
+    int fd = open(chemin, O_RDONLY);
+    struct stat buf;
+    fstat(fd, &buf);
+    return buf.st_size;
+}
+

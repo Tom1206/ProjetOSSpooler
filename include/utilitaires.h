@@ -16,6 +16,13 @@
 #include <time.h> //récupérer date courante
 
 
+#include <sys/types.h> 
+#include <sys/stat.h> 
+#include <unistd.h>
+#include <pwd.h> //getpwuid()
+#include <fcntl.h> //open()
+
+
 #define REPSPOOL "../data/spool" //TODO : ne fonctionne pas selon l'endroit d'où on lance le programme (demon.c -> analyser_dossier() -> opendir())
 
 //flag indiquant s'il faut afficher les messages d'erreurs ou non
@@ -28,5 +35,8 @@ void copyFile(const char * sourceFile, int fd);
 void deleteFile(const char* path);
 char* getIdFromFileName(char* fileName);
 char* getCurrentDate();
+char* getUserID(char* chemin);
+char* getRealFileName(char* rawFileName);
+int getFileSize(char* chemin);
 
 #endif // UTILITAIRES_H
