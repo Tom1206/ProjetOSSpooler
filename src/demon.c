@@ -20,6 +20,10 @@ int main(int argc, char const *argv[]) {
     //analyse des options donnés en arguments
     //note: le dernier arg est l'emplacement du fichier du démon
     int i;
+
+    int shift_last_param = 0; 
+    //permet de savoir quel est le rang du dernier paramètre (chemin log démon)
+    
     for(i = 1; i<argc - 1; i++){ 
         //arg debug
         if(strcmp(argv[i],"-d")==0){
@@ -27,10 +31,24 @@ int main(int argc, char const *argv[]) {
         }
         if(strcmp(argv[i],"-i")==0){
             DELAY = atoi(argv[i+1]);
+            shift_last_param++;
         }
     }
 
-    chemin_log_demon = (char*)argv[i-1];
+    chemin_log_demon = (char*)argv[argc-1];
+    snprintf(msg,sizeof(msg),"Chemin du log du démon : %s", chemin_log_demon);
+    debugInfo(msg);
+    deleteFile(chemin_log_demon);
+    //on récupère la date courante et on enregistre la date de démarrage dans le log
+    time_t rawtime;
+    struct tm * timeinfo;
+    time (&rawtime);
+    timeinfo = localtime (&rawtime);
+    char date_courante[100];
+    strftime(date_courante, sizeof(date_courante), "%c", timeinfo);
+    char log_demarrage[150];
+    snprintf(log_demarrage, sizeof(log_demarrage), "Starting at %s\n",date_courante);
+    log_demon(log_demarrage); //on enregistre la date de lancement du démon
 
     debugInfo("debug flag activated"); //s'affiche seulement si -d a été donné
 
@@ -57,9 +75,11 @@ int main(int argc, char const *argv[]) {
     return 0;
 }
 
-void log_demon(char* infos){
-    int fd = open(chemin_log_demon, O_CREAT | O_APPEND);
-    write(fd,infos,strlen(infos));
+int log_demon(char* infos){
+    snprintf(msg, sizeof(msg),"enregistrement log dans %s", chemin_log_demon);
+    debugInfo(msg);
+    int fd = open(chemin_log_demon, O_CREAT | O_APPEND | O_WRONLY);
+    return write(fd,infos,strlen(infos));
 }
 
 /**
@@ -109,7 +129,9 @@ void analyser_dossier(const char* chemin){
                     if(gzip(path, entry->d_name)==-1){
                         gestErr("analyser_dossier() -> gzip()");
                     }else{
-                        log_demon("test\n");
+                        if(log_demon("test\n")==-1){
+                            gestErr("analyser_dossier() -> log_demon()");
+                        }
                     }
 
                 }

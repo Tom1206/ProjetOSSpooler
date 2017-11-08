@@ -23,5 +23,6 @@ void gestErr(char * msg);
 void debugInfo(char * msg);
 char * getRepSpool();
 void copyFile(const char * sourceFile, int fd);
+void deleteFile(const char* path);
 
 #endif // UTILITAIRES_H

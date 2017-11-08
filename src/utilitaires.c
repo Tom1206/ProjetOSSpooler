@@ -78,3 +78,13 @@ void copyFile(const char * sourceFile, int fd) {
     fclose(target);
 
 }
+
+/**
+* @brief Supprime un fichier, s'il existe
+* @param path Chemin du fichier à supprimer
+* @return void
+*/
+void deleteFile(const char* path){
+    remove(path);
+}
+
