@@ -15,15 +15,13 @@ char* chemin_log_demon;
 int DELAY;
 int CONTINUE;
 int main(int argc, char const *argv[]) {
-    //(void)argc;
-    //(void)argv;
-    printf("Demon\n");
+
+    debugInfo("Demon\n");
 
     DELAY = 2;
     int flag_foreground = 0; 
-    //analyse des options donnés en arguments
-    //note: le dernier arg est l'emplacement du fichier du démon
 
+    //analyse des options donnés en arguments
     char c;
     while ((c = getopt(argc, (char * const*)argv, "dfi:")) != -1){
 
@@ -58,13 +56,7 @@ int main(int argc, char const *argv[]) {
     debugInfo(msg);
     deleteFile(chemin_log_demon);
     //on récupère la date courante et on enregistre la date de démarrage dans le log
-    /*time_t rawtime;
-    struct tm * timeinfo;
-    time (&rawtime);
-    timeinfo = localtime (&rawtime);
-    */
     char* date_courante = getCurrentDate();
-    //char log_demarrage[150];
     snprintf(msg_log, sizeof(msg_log), "Starting at %s\n",date_courante);
     log_demon(msg_log); //on enregistre la date de lancement du démon
 
@@ -72,10 +64,6 @@ int main(int argc, char const *argv[]) {
 
     snprintf(msg,sizeof(msg),"délai d'analyse : %d secondes\n",DELAY);
     debugInfo(msg);
-    //note: le dossier du daemon n'a pas à être spécifié en paramètre
-    //const char* chemin = "/home";
-
-    //const char* log_demon = argv[argc-1];
 
     CONTINUE = 1;
     if(flag_foreground == 0){ //on lance le prog en arrière-plan
@@ -106,9 +94,8 @@ void start(){
         // On vérifie le verrou, et on bloque tant que verrouillé
         while (verifVerrou() != 0);
 
-        //afficher_dossier(getRepSpool());
         analyser_dossier(getRepSpool());
-        printf("\n\n");
+        debugInfo("\n\n");
         sleep(DELAY);
     }
 }
@@ -150,13 +137,15 @@ void analyser_dossier(const char* chemin){
                 if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
                     continue;
                 snprintf(path, sizeof(path), "%s/%s", chemin, entry->d_name);
-                printf("%*s[%s]\n", indent, "", path/*entry->d_name*/);
+                snprintf(msg,sizeof(msg),"%*s[%s]\n", indent, "", path/*entry->d_name*/);
+                debugInfo(msg);
             }
             //sinon c'est un fichier
             else {
                 char path[1024];
                 snprintf(path, sizeof(path), "%s/%s", chemin, entry->d_name);
-                printf("%*s- %s\n", indent, "", path /*entry->d_name*/);
+                snprintf(msg,sizeof(msg),"%*s- %s\n", indent, "", path /*entry->d_name*/);
+                debugInfo(msg);
 
                 //on vérifie que le fichier est un fichier à analyser par le spool
 
@@ -245,7 +234,8 @@ void afficher_dossier(const char* chemin){
                 if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
                     continue;
                 snprintf(path, sizeof(path), "%s/%s", chemin, entry->d_name);
-                printf("%*s[%s]\n", indent, "", path/*entry->d_name*/);
+                snprintf(msg,sizeof(msg),"%*s[%s]\n", indent, "", path/*entry->d_name*/);
+                debugInfo(msg);
 
 
             }
@@ -253,7 +243,8 @@ void afficher_dossier(const char* chemin){
             else {
                 char path[1024];
                 snprintf(path, sizeof(path), "%s/%s", chemin, entry->d_name);
-                printf("%*s- %s\n", indent, "", path /*entry->d_name*/);
+                snprintf(msg,sizeof(msg),"%*s- %s\n", indent, "", path /*entry->d_name*/);
+                debugInfo(msg);
             }
         }
         closedir(dir);
