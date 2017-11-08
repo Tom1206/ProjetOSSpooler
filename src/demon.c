@@ -12,22 +12,29 @@
 char msg[512]; //pour les messages de debug
 char msg_log[512]; //pour les messages dans le log
 char* chemin_log_demon;
+int DELAY;
+int CONTINUE;
 int main(int argc, char const *argv[]) {
     //(void)argc;
     //(void)argv;
     printf("Demon\n");
 
-    int DELAY = 2;
+    DELAY = 2;
+    int flag_foreground = 0; 
     //analyse des options donnés en arguments
     //note: le dernier arg est l'emplacement du fichier du démon
 
     char c;
-    while ((c = getopt(argc, (char * const*)argv, "di:")) != -1){
+    while ((c = getopt(argc, (char * const*)argv, "dfi:")) != -1){
 
         switch (c){
             case 'd':
                 _DEBUG_FLAG = 1;
                 debugInfo("param d");
+                break;
+            case 'f':
+                flag_foreground = 1;
+                debugInfo("param f");
                 break;
             case 'i':
                 DELAY = atoi(optarg);
@@ -63,7 +70,6 @@ int main(int argc, char const *argv[]) {
 
     debugInfo("debug flag activated"); //s'affiche seulement si -d a été donné
 
-
     snprintf(msg,sizeof(msg),"délai d'analyse : %d secondes\n",DELAY);
     debugInfo(msg);
     //note: le dossier du daemon n'a pas à être spécifié en paramètre
@@ -71,9 +77,28 @@ int main(int argc, char const *argv[]) {
 
     //const char* log_demon = argv[argc-1];
 
+    CONTINUE = 1;
+    if(flag_foreground == 0){ //on lance le prog en arrière-plan
+        pid_t child_pid = fork();
+        if(child_pid >= 0){ //fork réussi
+            if(child_pid ==0){ //on est dans le fils
+                start();
+            }
+            else{
+                exit(0); //on tue le père
+            }
+        }else{
+            gestErr("demon.c -> main() -> fork()");
+            exit(1);
+        }
+    }
+    else{
+        start();
+    }
+    return 0;
+}
 
-    //appel d'une fonction toutes les DELAY secondes
-    int CONTINUE = 1;
+void start(){
     while(CONTINUE){
         snprintf(msg,100,"analyse du dossier %s",getRepSpool());
         debugInfo(msg);
@@ -86,8 +111,6 @@ int main(int argc, char const *argv[]) {
         printf("\n\n");
         sleep(DELAY);
     }
-
-    return 0;
 }
 
 int log_demon(char* infos){
@@ -109,8 +132,13 @@ void analyser_dossier(const char* chemin){
         int indent = 1;
         //on vérifie que le dossier peut être ouvert
         if (!(dir = opendir(chemin))){
-            gestErr("demon.c -> analyser_dossier() : ouverture dossier");
-            return;
+            if(errno == 2){
+                mkdir(chemin, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);            
+            }else{
+                gestErr("demon.c -> analyser_dossier() : ouverture dossier");
+                return;
+            }
+            
         }
 
         //lecture de chaque élément du répertoire, l'un après l'autre
