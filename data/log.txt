@@ -1,4 +1,4 @@
-Starting at Wed Nov  8 13:06:35 2017
-id=FlbD8N orgdate=Wed Nov  8 13:06:35 2017 user=joseffu file=image.jpg orgsize=0 curdate=Wed Nov  8 13:06:35 2017 
-id=vaHlh9 orgdate=Wed Nov  8 13:06:35 2017 user=joseffu file=lol.txt orgsize=5 curdate=Wed Nov  8 13:06:35 2017 
-id=RX5YHY orgdate=Wed Nov  8 13:06:35 2017 user=joseffu file=machin_test orgsize=1773 curdate=Wed Nov  8 13:06:35 2017 
+Starting at Wed Nov  8 14:18:53 2017
+id=sWmFeU orgdate=Wed Nov  8 14:18:53 2017 user=joseffu file=lol.txt orgsize=5 curdate=Wed Nov  8 14:18:53 2017 gzipsize=25 exit=0
+id=byjgRP orgdate=Wed Nov  8 14:18:53 2017 user=joseffu file=machin_test orgsize=1773 curdate=Wed Nov  8 14:18:53 2017 gzipsize=809 exit=0
+id=UpsStL orgdate=Wed Nov  8 14:18:53 2017 user=joseffu file=image.jpg orgsize=0 curdate=Wed Nov  8 14:18:53 2017 gzipsize=20 exit=0

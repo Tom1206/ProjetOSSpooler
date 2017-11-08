@@ -118,13 +118,13 @@ void analyser_dossier(const char* chemin){
                 
                 //on vérifie que le fichier est un fichier à analyser par le spool
                 
-                char substr[3];
+                char substr_[3];
                 //on récupère les 2 premiers carac. du nom du fichier
-                strncpy(substr,entry->d_name,2);
-                substr[2] = '\0';
-                snprintf(msg,sizeof(msg),"2 premiers carac. du nom du fichier = %s", substr);                
+                strncpy(substr_,entry->d_name,2);
+                substr_[2] = '\0';
+                snprintf(msg,sizeof(msg),"2 premiers carac. du nom du fichier = %s", substr_);                
                 debugInfo(msg);
-                if(strcmp(substr,"j_")==0){
+                if(strcmp(substr_,"j_")==0){
                     //dans le cas où c'est un fichier à traiter
                     debugInfo("    -> fichier à analyser");
                     //on log les premières étapes du spool
@@ -142,10 +142,20 @@ void analyser_dossier(const char* chemin){
 
                     if(gzip(c_path, entry->d_name)==-1){ //si erreur
                         gestErr("analyser_dossier() -> gzip()");
+                        log_demon("exit=1\n");
                     }else{
                         //TODO : tâche terminée, on enregistre le reste des infos dans le log
-                        snprintf(msg_log, sizeof(msg_log), " curdate=%s \n",
-                        getCurrentDate());
+                        char chemin_fichier_zip[512];
+                        snprintf(chemin_fichier_zip, sizeof(chemin_fichier_zip),"%s%s.gz",
+                            substr(path,0,strlen(path)-strlen(entry->d_name)),
+                            getRealFileName(entry->d_name)
+                        );
+                        //debugInfo("!!! chemin_fichier_zip = ");
+                        //debugInfo(chemin_fichier_zip);
+                        snprintf(msg_log, sizeof(msg_log), " curdate=%s gzipsize=%d exit=0\n",
+                        getCurrentDate(),
+                        getFileSize(chemin_fichier_zip)
+                        );
                         log_demon(msg_log);
                         
                         //on supprime la tâche
@@ -232,10 +242,10 @@ int gzip(const char * chemin, const char* nom_fichier){
         char* sortie;
         sortie = (char*)chemin; //chemin complet du fichier à compresser
         sortie[strlen(chemin)-strlen(nom_fichier)] = '\0'; //on ne garde que le chemin du repertoire
-        snprintf(cmd, sizeof(cmd),"gzip < %s%s > %s%s.gz", 
+        snprintf(cmd, sizeof(cmd),"gzip -n < %s%s > %s%s.gz", 
         chemin,nom_fichier,
         sortie,getRealFileName((char*)nom_fichier));// nom_fichier+2);
         debugInfo(cmd);
     return system(cmd); //TODO : compresser le fichier dans un fichier temproraire
-    //TODO : trouver pourquoi gzip afficher "gzip: stdin: Is a directory"
+    //TODO : utiliser un fork et exec* au lieu de la fonction system()
 }

@@ -38,5 +38,6 @@ char* getCurrentDate();
 char* getUserID(char* chemin);
 char* getRealFileName(char* rawFileName);
 int getFileSize(char* chemin);
+char* substr(char *src,int pos,int len);
 
 #endif // UTILITAIRES_H
