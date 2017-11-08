@@ -18,7 +18,6 @@
 #include <time.h>
 #include <sys/types.h>
 #include <pwd.h>
-#include <uuid/uuid.h>
 
 #include "utilitaires.h"
 
