@@ -79,7 +79,7 @@ int main(int argc, char const *argv[]) {
 int log_demon(char* infos){
     snprintf(msg, sizeof(msg),"enregistrement log dans %s", chemin_log_demon);
     debugInfo(msg);
-    int fd = open(chemin_log_demon, O_CREAT | O_APPEND | O_WRONLY);
+    int fd = open(chemin_log_demon, O_CREAT | O_APPEND | O_WRONLY, 0777);
     return write(fd,infos,strlen(infos));
 }
 
