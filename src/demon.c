@@ -22,10 +22,10 @@ int main(int argc, char const *argv[]) {
     //note: le dernier arg est l'emplacement du fichier du démon
     int i;
 
-    int shift_last_param = 0; 
+    int shift_last_param = 0;
     //permet de savoir quel est le rang du dernier paramètre (chemin log démon)
-    
-    for(i = 1; i<argc - 1; i++){ 
+
+    for(i = 1; i<argc - 1; i++){
         //arg debug
         if(strcmp(argv[i],"-d")==0){
             _DEBUG_FLAG = 1;
@@ -35,6 +35,15 @@ int main(int argc, char const *argv[]) {
             shift_last_param++;
         }
     }
+
+    // On crée un fichier verrou
+    char verrou[50];
+    char cheminVerrou[255];
+    snprintf(verrou, sizeof(verrou),"J'suis le verrou !");
+    snprintf(cheminVerrou, sizeof(cheminVerrou), "%s/verrou", getRepSpool());
+    int fd = open(cheminVerrou, O_CREAT | O_APPEND | O_WRONLY, 0777);
+    return write(fd,verrou,strlen(verrou));
+    close(fd);
 
     chemin_log_demon = (char*)argv[argc-1];
     snprintf(msg,sizeof(msg),"Chemin du log du démon : %s", chemin_log_demon);
@@ -53,15 +62,15 @@ int main(int argc, char const *argv[]) {
 
     debugInfo("debug flag activated"); //s'affiche seulement si -d a été donné
 
-    
+
     snprintf(msg,sizeof(msg),"délai d'analyse : %d secondes\n",DELAY);
     debugInfo(msg);
     //note: le dossier du daemon n'a pas à être spécifié en paramètre
-    //const char* chemin = "/home"; 
+    //const char* chemin = "/home";
 
-    //const char* log_demon = argv[argc-1]; 
-    
-    
+    //const char* log_demon = argv[argc-1];
+
+
     //appel d'une fonction toutes les DELAY secondes
     int CONTINUE = 1;
     while(CONTINUE){
@@ -85,11 +94,11 @@ int log_demon(char* infos){
 
 /**
 * @brief Analyse le contenu d'un dossier
-* @param chemin Répertoire à analyser 
+* @param chemin Répertoire à analyser
 * @return void
 */
 void analyser_dossier(const char* chemin){
-    
+
         DIR *dir;
         struct dirent *entry;
         int indent = 1;
@@ -98,7 +107,7 @@ void analyser_dossier(const char* chemin){
             gestErr("demon.c -> analyser_dossier() : ouverture dossier");
             return;
         }
-    
+
         //lecture de chaque élément du répertoire, l'un après l'autre
         while ((entry = readdir(dir)) != NULL) {
             //si l'élément est un répertoire
@@ -115,14 +124,14 @@ void analyser_dossier(const char* chemin){
                 char path[1024];
                 snprintf(path, sizeof(path), "%s/%s", chemin, entry->d_name);
                 printf("%*s- %s\n", indent, "", path /*entry->d_name*/);
-                
+
                 //on vérifie que le fichier est un fichier à analyser par le spool
-                
+
                 char substr_[3];
                 //on récupère les 2 premiers carac. du nom du fichier
                 strncpy(substr_,entry->d_name,2);
                 substr_[2] = '\0';
-                snprintf(msg,sizeof(msg),"2 premiers carac. du nom du fichier = %s", substr_);                
+                snprintf(msg,sizeof(msg),"2 premiers carac. du nom du fichier = %s", substr_);
                 debugInfo(msg);
                 if(strcmp(substr_,"j_")==0){
                     //dans le cas où c'est un fichier à traiter
@@ -157,13 +166,13 @@ void analyser_dossier(const char* chemin){
                         getFileSize(chemin_fichier_zip)
                         );
                         log_demon(msg_log);
-                        
+
                         //on supprime la tâche
                         snprintf(msg,sizeof(msg), "suppression de %s", path);
                         debugInfo(msg);
                         deleteFile(path);
 
-                        
+
                         /*
                         if(log_demon(msg_log)==-1){
                             gestErr("analyser_dossier() -> log_demon()");
@@ -180,12 +189,12 @@ void analyser_dossier(const char* chemin){
         closedir(dir);
     }
 
-   
+
 //liste les noms desfichiers d'un dossier
 //Note: fonction non-récursive (apparemment pas necessaire pour un spooler)
 //TODO: utiliser cet algo pour commencer à analyser les nom des fichier
 void afficher_dossier(const char* chemin){
-    
+
         DIR *dir;
         struct dirent *entry;
         int indent = 1;
@@ -194,7 +203,7 @@ void afficher_dossier(const char* chemin){
             gestErr("Ouverture dossier copyDir()");
             return;
         }
-    
+
         //lecture de chaque élément du répertoire, l'un après l'autre
         while ((entry = readdir(dir)) != NULL) {
             //si l'élément est un répertoire
@@ -205,8 +214,8 @@ void afficher_dossier(const char* chemin){
                     continue;
                 snprintf(path, sizeof(path), "%s/%s", chemin, entry->d_name);
                 printf("%*s[%s]\n", indent, "", path/*entry->d_name*/);
-    
-    
+
+
             }
             //sinon c'est un fichier
             else {
@@ -217,7 +226,7 @@ void afficher_dossier(const char* chemin){
         }
         closedir(dir);
     }
-    
+
 
 /**
 * @brief Utilise le programme gzip afin de compresser un fichier
@@ -233,8 +242,8 @@ int gzip(const char * chemin, const char* nom_fichier){
     //char * destination = (char *)chemin; //dossier où se trouvera le fichier compressé
     //destination[strlen(chemin)-strlen(nom_fichier)] = '\0';
     /*
-    snprintf(cmd, sizeof(cmd),"gzip --quiet < %s > %s/%s.gz", 
-        chemin, 
+    snprintf(cmd, sizeof(cmd),"gzip --quiet < %s > %s/%s.gz",
+        chemin,
         destination,
         nom_fichier+2);
         */
@@ -242,7 +251,7 @@ int gzip(const char * chemin, const char* nom_fichier){
         char* sortie;
         sortie = (char*)chemin; //chemin complet du fichier à compresser
         sortie[strlen(chemin)-strlen(nom_fichier)] = '\0'; //on ne garde que le chemin du repertoire
-        snprintf(cmd, sizeof(cmd),"gzip -n < %s%s > %s%s.gz", 
+        snprintf(cmd, sizeof(cmd),"gzip -n < %s%s > %s%s.gz",
         chemin,nom_fichier,
         sortie,getRealFileName((char*)nom_fichier));// nom_fichier+2);
         debugInfo(cmd);

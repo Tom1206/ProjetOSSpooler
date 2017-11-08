@@ -13,6 +13,7 @@
 int main(int argc, char const *argv[]) {
     // Pour chacuns des fichiers en paramètres...
     for (int i = 1; i < argc; i++) {
+
         // On teste si le fichier existe
         if (access(argv[i], F_OK) != 0) {
             printf("Le fichier \"%s\" n'existe pas\n", argv[i]);
@@ -21,9 +22,12 @@ int main(int argc, char const *argv[]) {
 
         // On teste si le spool existe
         if (access(getRepSpool(), F_OK) != 0) {
-            printf("Le fichier \"%s\" n'existe pas\n", argv[i]);
+            printf("Le spool \"%s\" n'existe pas\n", getRepSpool());
             exit(EXIT_FAILURE);
         }
+
+        // On génère l'adresse du verrou et on teste son existence
+        
 
         // On crée le fichier job, de la forme j_nomDuFichierOriginal_XXXXXX
         char tmpName[512];
